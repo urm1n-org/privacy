@@ -14,7 +14,6 @@
   const developer = config.developer || GLOBAL_PROFILE.developerName;
   const contactEmail = config.contactEmail || buildAliasEmail(config.contactAlias || slugify(appName));
   const lastUpdated = config.lastUpdated || new Date().toISOString().slice(0, 10);
-  const homeHref = config.homeHref || "../";
 
   document.title = appName + " Privacy Policy";
   setMetaByName("description", "Privacy policy for " + appName + " by " + developer + ".");
@@ -33,59 +32,35 @@
   const header = document.createElement("header");
   header.className = "policy-header";
 
-  const backLink = document.createElement("a");
-  backLink.className = "back-link";
-  backLink.href = homeHref;
-  backLink.textContent = "\u2190 Back to all apps";
-
   const title = document.createElement("h1");
   title.textContent = appName + " Privacy Policy";
 
-  const metaGrid = document.createElement("dl");
-  metaGrid.className = "meta-grid";
+  const metaLine = document.createElement("p");
+  metaLine.className = "policy-meta";
 
-  appendMeta(metaGrid, "App", appName, false);
-  appendMeta(metaGrid, "Developer", developer, false);
-  appendMeta(metaGrid, "Contact", contactEmail, true);
-  appendMeta(metaGrid, "Last updated", formatDate(lastUpdated), false);
+  const updatedSpan = document.createElement("span");
+  updatedSpan.textContent = "Last updated: " + formatDate(lastUpdated);
 
-  header.appendChild(backLink);
+  const divider = document.createElement("span");
+  divider.className = "policy-meta-divider";
+  divider.textContent = " \u2022 ";
+
+  const contactSpan = document.createElement("span");
+  contactSpan.textContent = "Contact: ";
+
+  const emailLink = document.createElement("a");
+  emailLink.href = "mailto:" + contactEmail;
+  emailLink.textContent = contactEmail;
+
+  contactSpan.appendChild(emailLink);
+  metaLine.appendChild(updatedSpan);
+  metaLine.appendChild(divider);
+  metaLine.appendChild(contactSpan);
+
   header.appendChild(title);
-  header.appendChild(metaGrid);
-
-  const footer = document.createElement("footer");
-  footer.className = "site-footer";
-
-  const footerText = document.createElement("p");
-  footerText.textContent = "\u00A9 " + new Date().getFullYear() + " " + developer + ". Contact: ";
-
-  const mailLink = document.createElement("a");
-  mailLink.href = "mailto:" + contactEmail;
-  mailLink.textContent = contactEmail;
-
-  footerText.appendChild(mailLink);
-  footer.appendChild(footerText);
+  header.appendChild(metaLine);
 
   policyRoot.insertBefore(header, policyRoot.firstChild);
-  policyRoot.appendChild(footer);
-
-  function appendMeta(container, label, value, asEmail) {
-    const term = document.createElement("dt");
-    term.textContent = label;
-
-    const detail = document.createElement("dd");
-    if (asEmail) {
-      const link = document.createElement("a");
-      link.href = "mailto:" + value;
-      link.textContent = value;
-      detail.appendChild(link);
-    } else {
-      detail.textContent = value;
-    }
-
-    container.appendChild(term);
-    container.appendChild(detail);
-  }
 
   function buildAliasEmail(alias) {
     const parts = GLOBAL_PROFILE.baseContactEmail.split("@");
